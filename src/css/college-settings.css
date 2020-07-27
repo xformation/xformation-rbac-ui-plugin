@@ -1,0 +1,65 @@
+/*********************************** General ***********************************/
+
+.has-error .error {
+  display: block;
+}
+
+.error {
+  color: #e02f44;
+  display: none;
+}
+
+/********************************* College Info *******************************/
+
+.info-container .logo {
+  width: 100px;
+  height: 18px;
+}
+
+.info-container .background {
+  width: 500px;
+}
+
+/******************************** College Branches ********************************/
+
+.react-strap-modal-container > .modal-content {
+  padding: 0px !important;
+}
+
+.react-strap-modal-container .modal-header {
+  background: #1c95ea;
+  border-bottom: 1px solid #c7d0d9;
+  box-shadow: none !important;
+}
+
+.react-strap-modal-container .modal-header .modal-title {
+  margin-bottom: 0px;
+  padding: 17px 10px;
+  color: white;
+}
+
+/********************************** Calendar *******************************/
+
+.calendar-container {
+  min-height: max-content;
+  height: calc(100vh - 100px);
+}
+
+.calendar-container .rbc-event-label {
+  display: none;
+}
+
+.calendar-event-container {
+  padding: 5px;
+}
+
+.calendar-event-container .image-container {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+}
+
+.calendar-event-container .text-container {
+  display: inline-block;
+  padding-left: 10px;
+}

@@ -1,0 +1,36 @@
+{
+  "type": "app",
+  "name": "rbac",
+  "id": "xformation-rbac-ui-plugin",
+  "css": {
+    "dark": "css/dark.css",
+    "light": "css/light.css"
+  },
+  "info": {
+    "description": "rbac plugin",
+    "author": {
+      "name": "Synectiks",
+      "url": "https://xformation.com"
+    },
+    "keywords": ["cms", "panel"],
+    "version": "1.0",
+    "updated": "2018-10-12",
+    "logos": {
+      "small": "img/icon_cog.svg",
+      "large": "img/icon_cog.svg"
+    }
+  },
+  "includes": [
+    {
+      "type": "page",
+      "name": "Home",
+      "addToNav": false,
+      "defaultNav": false,
+      "component": "PreferenceMainClass"
+    }
+  ],
+  "dependencies": {
+    "grafanaVersion": "3.x 4.x 5.x",
+    "plugins": []
+  }
+}

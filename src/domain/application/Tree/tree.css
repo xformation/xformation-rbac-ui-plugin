@@ -1,0 +1,13 @@
+.parent-node {
+  padding: 10px;
+}
+.parent-node ul {
+  margin: 0px;
+}
+
+.parent-node .collapse-expand-btn {
+  border: 0px;
+  background-color: transparent;
+  width: 20px;
+  font-size: 20px;
+}
