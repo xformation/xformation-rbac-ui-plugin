@@ -1,4 +1,4 @@
-const IP = 'localhost';
+const IP = '100.64.108.25';
 
 const secSrvUrl = 'http://' + IP + ':8094';
 // const preferenceRestUrl = 'http://' + IP + ':9091/api';
