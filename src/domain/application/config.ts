@@ -1,5 +1,5 @@
-// const IP = '100.64.108.25';
-const IP = 'localhost';
+const IP = '100.64.108.25';
+// const IP = 'localhost';
 const secSrvUrl = 'http://' + IP + ':8094';
 // const preferenceRestUrl = 'http://' + IP + ':9091/api';
 // const backendRestUrl = 'http://' + IP + ':8080/api';
@@ -46,6 +46,7 @@ export const config = {
   USERS_CREATE: secSrvUrl + '/security/users/create',
   USERS_UPDATE: secSrvUrl + '/security/users/update',
   USERS_GET: secSrvUrl + '/security/users/',
+  PARENT_NAME: 'xformation-rbac-ui-plugin',
 
   // LABEL_COLLEGE_SETTINGS: 'College Settings',
   // LABEL_ACADEMIC_SETTINGS: 'Academic Settings',
