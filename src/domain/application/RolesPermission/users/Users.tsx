@@ -7,7 +7,7 @@ import * as _ from "lodash";
 // import wsCmsBackendServiceSingletonClient from '../../../../wsCmsBackendServiceClient';
 
 const ERROR_MESSAGE_MANDATORY_FIELD_MISSING = "Mandatory fields missing";
-const ERROR_MESSAGE_SERVER_SIDE_ERROR = "Operation could not be performed. Please check security service logs or API path";
+const ERROR_MESSAGE_SERVER_SIDE_ERROR = "Operation failed. May have some issues in services";
 const SUCCESS_MESSAGE_ADDED = "New user added successfully";
 const SUCCESS_MESSAGE_GROUPROLES_ASSIGNED_TO_USER = "Groups assigned successfully to the selected user";
 const SUCCESS_MESSAGE_UPDATED = "User updated successfully";
@@ -54,6 +54,8 @@ export class Users extends React.Component<RbacProps, any> {
       searchAssignUser: "",
       searchAssignGroup: "",
       selectedAssignUser: null,
+      organization: "",
+      editOrganization: "",
     };
     this.showImport = this.showImport.bind(this);
     this.showModal = this.showModal.bind(this);
@@ -183,6 +185,7 @@ export class Users extends React.Component<RbacProps, any> {
       email: "",
       userName: "",
       userPassword: "",
+      organization: "",
     }));
   }
 
@@ -195,6 +198,7 @@ export class Users extends React.Component<RbacProps, any> {
       editEmail: user !== null ? user.email : "",
       editUserName: user !== null ? user.username: "",
       editUserPassword: user !== null ? user.password: "",
+      editOrganization: user !== null ? user.organization.name : "",
     }));
   }
 
@@ -250,6 +254,9 @@ export class Users extends React.Component<RbacProps, any> {
                 {obj.email}
             </td>
             <td>
+                {obj.organization.name}
+            </td>
+            <td>
                 {roleName}
             </td>
           </tr>
@@ -269,11 +276,11 @@ export class Users extends React.Component<RbacProps, any> {
   }
 
   validateEdit(){
-    const {editEmail, editUserName, editUserPassword} = this.state;
+    const {editEmail, editUserName, editUserPassword, editOrganization} = this.state;
     let errorMessage = this.isMandatoryField(editEmail, "editEmail");
     errorMessage = this.isMandatoryField(editUserName, "editUserName");
     errorMessage = this.isMandatoryField(editUserPassword, "editUserPassword");
-
+    errorMessage = this.isMandatoryField(editOrganization, "editOrganization");
     this.setState({
         errorMessage: errorMessage
     });
@@ -284,11 +291,12 @@ export class Users extends React.Component<RbacProps, any> {
   }
 
   validate(){
-    const {email, userName, userPassword} = this.state;
+    const {email, userName, userPassword, organization} = this.state;
     let errorMessage = this.isMandatoryField(email, "email");
     errorMessage = this.isMandatoryField(userName, "userName");
     errorMessage = this.isMandatoryField(userPassword, "userPassword");
-
+    errorMessage = this.isMandatoryField(organization, "organization");
+    
     this.setState({
         errorMessage: errorMessage
     });
@@ -299,7 +307,7 @@ export class Users extends React.Component<RbacProps, any> {
   }
 
   async saveUser() {
-    const {email, userName, userPassword,errorMessage} = this.state;
+    const {email, userName, userPassword,errorMessage, organization} = this.state;
     if(!this.validate()){
       console.log("Save user validation error : ",errorMessage);
       return;
@@ -309,21 +317,30 @@ export class Users extends React.Component<RbacProps, any> {
       username: userName,
       password: userPassword,
       active: true,
-      createdBy: 'APPLICATION'
+      createdBy: 'APPLICATION',
+      organization: organization
     }
     console.log('Save user: ', obj);
-    await rbacSettingsServices.saveUser(obj).then(response => {
+    await rbacSettingsServices.saveUser(obj)
+      .then(response => {
       console.log('Save user response: ', response);
-      this.setState({
-        successMessage: SUCCESS_MESSAGE_ADDED,
-      });
+      if(response.code){
+        this.setState({
+          errorMessage: response.message,
+        });  
+      }else{
+        this.setState({
+          successMessage: SUCCESS_MESSAGE_ADDED,
+        });
+      }
+      
     });
     await this.getAllUsers();
     await this.getAllGroups();
   };
 
   async updateUser() {
-    const {editEmail, editUserName, editUserPassword,errorMessage, selectedUser} = this.state;
+    const {editEmail, editUserName, editUserPassword,errorMessage, selectedUser, editOrganization} = this.state;
     if(!this.validateEdit()){
       console.log("User validation error : ",errorMessage);
       return;
@@ -333,13 +350,21 @@ export class Users extends React.Component<RbacProps, any> {
       email: editEmail,
       username: editUserName,
       password: editUserPassword,
+      organization: editOrganization,
     }
     console.log('Update user: ', obj);
     await rbacSettingsServices.updateUser(obj).then(response => {
       console.log('Update user response: ', response);
-      this.setState({
-        successMessage: SUCCESS_MESSAGE_UPDATED,
-      });
+      if(response.stackTrace){
+        this.setState({
+          errorMessage: ERROR_MESSAGE_SERVER_SIDE_ERROR,
+        });  
+      }else{
+        this.setState({
+          successMessage: SUCCESS_MESSAGE_UPDATED,
+        });
+      }
+      
     });
     await this.getAllUsers();
     await this.getAllGroups();
@@ -599,7 +624,7 @@ export class Users extends React.Component<RbacProps, any> {
   render() {
     const {errorMessage, successMessage, isModalOpen, isAssignRole, isImport, users, orgUsers, assignUsers, groups, email, userName, userPassword,
       selectedUser, isEditModalOpen, editEmail, editUserName, editUserPassword, searchAssignUser, assignGroups, 
-      searchUser, searchAssignGroup, selectedAssignUser} = this.state;
+      searchUser, searchAssignGroup, selectedAssignUser, organization, editOrganization} = this.state;
     return (
       <div className="info-container">
         <div className="border p-1 pb-2">
@@ -683,7 +708,12 @@ export class Users extends React.Component<RbacProps, any> {
                       <input type="password" name="userPassword" id="userPassword" value={userPassword} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Password" />
                     </div>
                   </div>
-
+                  <div className="fwidth-modal-text modal-fwidth">
+                    <div className="fwidth-modal-text fwidth m-r-1">
+                      <label className="add-permission-label">Organization</label>
+                      <input type="text" name="organization" id="organization" value={organization} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Organization" />
+                    </div>
+                  </div>
                   <div className="m-t-1 text-center">
                     <button type="button" className="btn btn-primary border-bottom mr-1border-bottom mr-1 save-btn" onClick={this.saveUser}> Save </button>
                     <button className="btn btn-danger border-bottom mr-1 save-btn" onClick={e => this.showModal(e, false)} > Cancel </button>
@@ -711,19 +741,25 @@ export class Users extends React.Component<RbacProps, any> {
                   <div className="mdflex modal-fwidth">
                     <div className="fwidth-modal-text fwidth m-r-1">
                       <label className="add-permission-label">Email</label>
-                      <input type="text" name="editEmail" id="editEmail" value={editEmail} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Email" />
+                      <input type="text" name="editEmail" id="editEmail" value={editEmail} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your email" />
                     </div>
                   </div>
                   <div className="mdflex modal-fwidth">
                     <div  className="fwidth-modal-text fwidth m-r-1">
                       <label className="add-permission-label">Login Id </label>
-                      <input type="text" name="editUserName" id="editUserName" value={editUserName} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Username" />
+                      <input type="text" name="editUserName" id="editUserName" value={editUserName} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your user name" />
                     </div>
                   </div>
                   <div className="fwidth-modal-text modal-fwidth">
                     <div className="fwidth-modal-text fwidth m-r-1">
                       <label className="add-permission-label">Password</label>
-                      <input type="password" name="editUserPassword" id="editUserPassword" value={editUserPassword} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Password" />
+                      <input type="password" name="editUserPassword" id="editUserPassword" value={editUserPassword} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your password" />
+                    </div>
+                  </div>
+                  <div className="fwidth-modal-text modal-fwidth">
+                    <div className="fwidth-modal-text fwidth m-r-1">
+                      <label className="add-permission-label">Organization</label>
+                      <input type="text" name="editOrganization" id="editOrganization" value={editOrganization} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your organization" />
                     </div>
                   </div>
 
@@ -789,6 +825,7 @@ export class Users extends React.Component<RbacProps, any> {
                 <tr>
                   <th>User Name</th>
                   <th>Email</th>
+                  <th>Organization</th>
                   <th>Role Groups Assigned To Users</th>
                 </tr>
               </thead>
