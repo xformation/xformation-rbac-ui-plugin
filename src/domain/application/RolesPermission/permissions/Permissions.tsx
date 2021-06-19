@@ -200,28 +200,28 @@ export class Permissions extends React.Component<any, any> {
     return errorMessage;
   }
 
-  // validate(){
-  //   const {permissionName, permission, description} = this.state;
-  //   // let errorMessage = this.isMandatoryField(permissionName, "permissionName");
-  //   // errorMessage = this.isMandatoryField(permission, "permission");
-  //   // this.setState({
-  //   //     errorMessage: errorMessage
-  //   // });
-  //   // if(errorMessage !== "") {
-  //   //   return false;
-  //   // }
-  //   return true;
-  // }
+  validate(){
+    const {permissionName, permission, description} = this.state;
+    // let errorMessage = this.isMandatoryField(permissionName, "permissionName");
+    let errorMessage = this.isMandatoryField(permission, "permission");
+    this.setState({
+        errorMessage: errorMessage
+    });
+    if(errorMessage !== "") {
+      return false;
+    }
+    return true;
+  }
   
   async savePermission() {
     const {permissionName, permission, description, errorMessage} = this.state;
-    // if(!this.validate()){
-    //   console.log("Validation error : ",errorMessage);
-    //   return;
-    // }
+    if(!this.validate()){
+      console.log("Validation error : ",errorMessage);
+      return;
+    }
     let perm = {
       version: 1,
-      name:permissionName,
+      name: permission, //permissionName,
       permission: permission,
       description: description
     }
@@ -277,16 +277,13 @@ export class Permissions extends React.Component<any, any> {
                         <MessageBox id="mbox" message={successMessage} activeTab={1}/>        
                         : null
                 }
-                    <div className="mdflex modal-fwidth"> 
+                  {/* <div className="mdflex modal-fwidth"> 
                     <div className="fwidth-modal-text m-r-1 fwidth">
-                      <label className="add-permission-label">Parent</label>
-                      {/* <select className="gf-form-input" name="permissionName" id="permissionName" value={permissionName} onChange={this.handleStateChange}>
-                        <option value="">Select</option>
-                        {this.createSelectbox(uiModules, "moduleName", "moduleName", "moduleName")}
-                      </select> */}
+                      <label className="add-permission-label">Parent/Name</label>
+                     
                       <input type="text" className="gf-form-input" name="permissionName" id="permissionName" value={permissionName} onChange={this.handleStateChange}/>
                     </div>
-                  </div>  
+                  </div>   */}
                   <div className="mdflex modal-fwidth">
                     <div className="fwidth-modal-text m-r-1 fwidth">
                       <label className="add-permission-label">Permissions </label>
