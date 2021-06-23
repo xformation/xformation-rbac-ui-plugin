@@ -197,8 +197,8 @@ export class Users extends React.Component<RbacProps, any> {
       successMessage: "",
       editEmail: user !== null ? user.email : "",
       editUserName: user !== null ? user.username: "",
-      editUserPassword: user !== null ? user.password: "",
-      editOrganization: user !== null ? user.organization.name : "",
+      editUserPassword: "",
+      editOrganization: user !== null ? (user.organization !== null ? user.organization.name : null) : "",
     }));
   }
 
@@ -226,7 +226,7 @@ export class Users extends React.Component<RbacProps, any> {
   }
 
   createRows(objAry: any) {
-    console.log("createRows() Users list on user page: ", objAry);
+    // console.log("createRows() Users list on user page: ", objAry);
     if(objAry === undefined || objAry === null) {
         return;
     }
@@ -235,6 +235,7 @@ export class Users extends React.Component<RbacProps, any> {
     
     for (let i = 0; i < arrLength; i++) {
         const obj = objAry[i];
+        console.log("rback : users : ",obj);
         const roles = obj.roles;
         const roleName = [];
         let str = '';
@@ -254,7 +255,7 @@ export class Users extends React.Component<RbacProps, any> {
                 {obj.email}
             </td>
             <td>
-                {obj.organization.name}
+                {obj.organization !== null ? obj.organization.name : null}
             </td>
             <td>
                 {roleName}
@@ -278,8 +279,8 @@ export class Users extends React.Component<RbacProps, any> {
   validateEdit(){
     const {editEmail, editUserName, editUserPassword, editOrganization} = this.state;
     let errorMessage = this.isMandatoryField(editEmail, "editEmail");
-    errorMessage = this.isMandatoryField(editUserName, "editUserName");
-    errorMessage = this.isMandatoryField(editUserPassword, "editUserPassword");
+    // errorMessage = this.isMandatoryField(editUserName, "editUserName");
+    // errorMessage = this.isMandatoryField(editUserPassword, "editUserPassword");
     errorMessage = this.isMandatoryField(editOrganization, "editOrganization");
     this.setState({
         errorMessage: errorMessage
@@ -355,9 +356,9 @@ export class Users extends React.Component<RbacProps, any> {
     console.log('Update user: ', obj);
     await rbacSettingsServices.updateUser(obj).then(response => {
       console.log('Update user response: ', response);
-      if(response.stackTrace){
+      if(response.code){
         this.setState({
-          errorMessage: ERROR_MESSAGE_SERVER_SIDE_ERROR,
+          errorMessage: response.message,
         });  
       }else{
         this.setState({
@@ -603,20 +604,22 @@ export class Users extends React.Component<RbacProps, any> {
   }
 
   async assignSelectedGroupRolesToSelectedUser(){
-    const {selectedAssignUser} = this.state;
+    const {selectedAssignUser, assignGroups} = this.state;
+    
     // let obj = {
     //   id: selectedUser.id,
     //   email: editEmail,
     //   username: editUserName,
     //   password: editUserPassword,
     // }
-    console.log('Update user roles: ', selectedAssignUser);
-    await rbacSettingsServices.updateUser(selectedAssignUser).then(response => {
-      console.log('Update user roles response: ', response);
-      this.setState({
-        successMessage: SUCCESS_MESSAGE_GROUPROLES_ASSIGNED_TO_USER,
-      });
-    });
+    console.log('Rbac AssignedGroups-> ', assignGroups);
+    // await rbacSettingsServices.updateUser(selectedAssignUser).then(response => {
+    //   console.log('Update user roles response: ', response);
+    //   this.setState({
+    //     successMessage: SUCCESS_MESSAGE_GROUPROLES_ASSIGNED_TO_USER,
+    //   });
+    // });
+    
     // await this.getAllUsers();
     // await this.getAllGroups();
   }
@@ -692,14 +695,14 @@ export class Users extends React.Component<RbacProps, any> {
                   }
                   <div className="mdflex modal-fwidth">
                     <div className="fwidth-modal-text fwidth m-r-1">
-                      <label className="add-permission-label">Email</label>
-                      <input type="text" name="email" id="email" value={email} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Email" />
+                      <label className="add-permission-label">Login Id </label>
+                      <input type="text" name="userName" id="userName" value={userName} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Username" />
                     </div>
                   </div>
                   <div className="mdflex modal-fwidth">
                     <div className="fwidth-modal-text fwidth m-r-1">
-                      <label className="add-permission-label">Login Id </label>
-                      <input type="text" name="userName" id="userName" value={userName} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Username" />
+                      <label className="add-permission-label">Email</label>
+                      <input type="text" name="email" id="email" value={email} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter Your Email" />
                     </div>
                   </div>
                   <div className="fwidth-modal-text modal-fwidth">
@@ -739,15 +742,15 @@ export class Users extends React.Component<RbacProps, any> {
                           : null
                   }
                   <div className="mdflex modal-fwidth">
-                    <div className="fwidth-modal-text fwidth m-r-1">
-                      <label className="add-permission-label">Email</label>
-                      <input type="text" name="editEmail" id="editEmail" value={editEmail} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your email" />
+                    <div  className="fwidth-modal-text fwidth m-r-1">
+                      <label className="add-permission-label">Login Id </label>
+                      <input type="text" disabled={true} name="editUserName" id="editUserName" value={editUserName} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your user name" />
                     </div>
                   </div>
                   <div className="mdflex modal-fwidth">
-                    <div  className="fwidth-modal-text fwidth m-r-1">
-                      <label className="add-permission-label">Login Id </label>
-                      <input type="text" name="editUserName" id="editUserName" value={editUserName} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your user name" />
+                    <div className="fwidth-modal-text fwidth m-r-1">
+                      <label className="add-permission-label">Email</label>
+                      <input type="text" name="editEmail" id="editEmail" value={editEmail} onChange={this.handleStateChange} maxLength={255} className="gf-form-input " placeholder="Enter your email" />
                     </div>
                   </div>
                   <div className="fwidth-modal-text modal-fwidth">
