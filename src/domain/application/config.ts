@@ -10,6 +10,7 @@ export const config = {
   USERS_CREATE: secSrvUrl + '/security/users/create',
   USERS_UPDATE: secSrvUrl + '/security/users/update',
   USERS_GET: secSrvUrl + '/security/users/',
+  USERS_ASSIGN_GROUP: secSrvUrl + '/security/users/updateAssignedRoleGroups',
   PARENT_NAME: 'xformation-rbac-ui-plugin',
 
   LABEL_ROLES_AND_PERMISSIONS: 'Roles & Permissions',

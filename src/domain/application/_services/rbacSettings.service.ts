@@ -13,7 +13,7 @@ export const rbacSettingsServices = {
   updateUser,
   // importUser,
   createRole,
-  
+  assignGroupsToUser,
 };
 
 // function getUiModules() {
@@ -74,6 +74,16 @@ function updateUser(data: any) {
   return fetch(config.USERS_UPDATE, requestOptions).then(response => response.json());
 }
 
+function assignGroupsToUser(data: any) {
+  const requestOptions = commonFunctions.getRequestOptions(
+    'POST',
+    {'Content-Type': 'application/json;charset=UTF-8'},
+    JSON.stringify(data)
+  );
+  return fetch(config.USERS_ASSIGN_GROUP, requestOptions).then(response =>
+    response.json()
+  );
+}
 // function importUser(isTeacher: any, isStudent: any, isEmployee: any, branchId: any) {
 //   const requestOptions = commonFunctions.getRequestOptions('POST', {});
 //   return fetch(
@@ -106,11 +116,3 @@ function createRole(data: any) {
 //     requestOptions
 //   ).then(response => response.json());
 // }
-
-
-
-
-
-
-
-

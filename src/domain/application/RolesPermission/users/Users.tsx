@@ -606,22 +606,23 @@ export class Users extends React.Component<RbacProps, any> {
   async assignSelectedGroupRolesToSelectedUser(){
     const {selectedAssignUser, assignGroups} = this.state;
     
-    // let obj = {
-    //   id: selectedUser.id,
-    //   email: editEmail,
-    //   username: editUserName,
-    //   password: editUserPassword,
-    // }
-    console.log('Rbac AssignedGroups-> ', assignGroups);
-    // await rbacSettingsServices.updateUser(selectedAssignUser).then(response => {
-    //   console.log('Update user roles response: ', response);
-    //   this.setState({
-    //     successMessage: SUCCESS_MESSAGE_GROUPROLES_ASSIGNED_TO_USER,
-    //   });
-    // });
+    console.log('Rbac selected User-> ', selectedAssignUser);
+    await rbacSettingsServices.assignGroupsToUser(selectedAssignUser).then(response => {
+      console.log('Response after role group update: ', response);
+      if(response.code){
+        this.setState({
+          errorMessage: response.message,
+        });  
+      }else{
+        this.setState({
+          successMessage: SUCCESS_MESSAGE_UPDATED,
+        });
+      }
+      
+    });
     
-    // await this.getAllUsers();
-    // await this.getAllGroups();
+    await this.getAllUsers();
+    await this.getAllGroups();
   }
 
   render() {
